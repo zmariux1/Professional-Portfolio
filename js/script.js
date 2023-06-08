@@ -52,10 +52,47 @@ ScrollReveal().reveal(".home-content p, .about-content", { origin: "right" });
 
 
 // ===================== typed js ===================== 
-const typed = new Typed(".multuple-text", {
-  strings: ["Web Developer", "Frontend Dev", "Backend Dev"],
-  typeSpeed: 100,
-  backSpeed: 100,
-  backDelay: 1000,
-  loop: true
-})
+const strings = ["Web Developer ", "Frontend Dev ", "Backend Dev "];
+const outputElement = document.getElementById('output');
+let currentIndex = 0;
+
+function displayWordByLetter() {
+  const word = strings[currentIndex];
+  let i = 0;
+  let intervalId = setInterval(() => {
+    const currentLetters = word.slice(0, i + 1);
+    outputElement.textContent = currentLetters;
+    i++;
+
+    if (i >= word.length) {
+      clearInterval(intervalId);
+      setTimeout(() => {
+        removeWordByLetter(word);
+      }, 250); // Delay of 1 second before removing the word
+    }
+  }, 250); // Delay of 1 second between letters
+}
+
+function removeWordByLetter(word) {
+  let i = word.length;
+  let intervalId = setInterval(() => {
+    const currentLetters = word.slice(0, i);
+    outputElement.textContent = currentLetters;
+    i--;
+
+    if (i < 0) {
+      clearInterval(intervalId);
+      currentIndex++;
+
+      if (currentIndex >= strings.length) {
+        currentIndex = 0; // Restart from the beginning if all words are displayed
+      }
+
+      setTimeout(() => {
+        displayWordByLetter();
+      }, 100); // Delay of 1 second before displaying the next word
+    }
+  }, 100); // Delay of 1 second between letters
+}
+
+displayWordByLetter();
