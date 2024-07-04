@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sliding Boxes</title>
+  <style>
+    :root {
+      --box-sizeW: 300px;
+      --box-sizeH: 200px;
+    }
+
+    .container {
+      width: var(--box-sizeW);
+      height: var(--box-sizeH);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .box {
+      width: var(--box-sizeW);
+      height: var(--box-sizeH);
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      left: var(--box-sizeW);
+      transition: left 0.5s;
+    }
+
+    .box:first-child {
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="box">Box 1</div>
+    <div class="box">Box 2</div>
+    <div class="box">Box 3</div>
+    <div class="box">Box 4</div>
+    <div class="box">Box 5</div>
+  </div>
+
+  <div class="container">
+    <div class="box">Box 1</div>
+    <div class="box">Box 2</div>
+    <div class="box">Box 3</div>
+  </div>
+
+  <script>
+    function initSlideBoxes(container) {
+      const boxes = container.querySelectorAll('.box');
+      let currentBox = 0;
+      const boxSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--box-sizeW'));
+
+      function slideBoxes() {
+        // Set the previous box opacity to 0
+        boxes[(currentBox - 1 + boxes.length) % boxes.length].style.opacity = '0';
+
+        // Reset the previous box position to the right, offscreen
+        boxes[(currentBox - 1 + boxes.length) % boxes.length].style.left = `${boxSize}px`;
+
+        // If the current box is the second-to-last box, set the opacity of the last box to 1
+        if (currentBox === boxes.length - 2) {
+          boxes[boxes.length - 1].style.opacity = '1';
+        }
+        // If the current box is the last box, set the opacity of all boxes back to 1 after a delay
+        if (currentBox === boxes.length - 1) {
+          setTimeout(() => {
+            boxes.forEach(box => {
+              box.style.opacity = '1';
+            });
+          }, 250);
+        }
+
+        // 1. Slide current box out to the left
+        boxes[currentBox].style.left = `-${boxSize}px`;
+
+        // 2. Move to the next box (wrapping around)
+        currentBox = (currentBox + 1) % boxes.length;
+
+        // 3. Immediately slide the next box in from the right
+        setTimeout(() => {
+          boxes[currentBox].style.left = '0';
+        }, 50);
+      }
+
+      setInterval(slideBoxes, 2000);
+    }
+
+    const containers = document.querySelectorAll('.container');
+    containers.forEach(initSlideBoxes);
+  </script>
+</body>
+</html>
